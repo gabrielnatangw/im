@@ -22,8 +22,7 @@ app.get('/env',(req, res)=>{
         console.log('ID do container Docker:', containerId);
     });
 
-    const envSend = process.env.ENV_MY || 'not found'
-    return res.json({env: envSend})
+    return res.json({env: containerId})
 })
 
 app.listen(port,()=>{
