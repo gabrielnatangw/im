@@ -16,7 +16,7 @@ WORKDIR /app
 
 # Copiando os artefatos do frontend
 COPY --from=build /app/client/dist ./client/dist
-COPY --from=build /app/client/package*.json ./client/package*.json
+COPY --from=build /app/client/package.json ./client/package.json
 COPY --from=build /app/client/node_modules ./client/node_modules
 
 # Copiando o backend
