@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import fs from "fs"
+import os from "os"
 
 const app = express()
 const port = 3000
@@ -8,21 +9,23 @@ const port = 3000
 app.use(cors())
 app.use(express.json())
 
-app.get('/env',(req, res)=>{
-    const dockerIdFile = '/proc/self/cgroup';
 
-    fs.readFile(dockerIdFile, 'utf8', (err, data) => {
-        if (err) {
-            console.error('Erro ao ler o ID do container Docker:', err);
-            return;
+
+function getExternalIPv4() {
+    const interfaces = os.networkInterfaces();
+    for (let iface in interfaces) {
+        for (let details of interfaces[iface]) {
+            if (details.family === 'IPv4' && !details.internal) {
+                return details.address;
+            }
         }
+    }
+    return 'IP não encontrado';
+}
 
-        // O ID do container é a última parte do caminho no cgroup
-        const containerId = data.split('\n')[0].split('/').pop();
-        console.log('ID do container Docker:', containerId);
-    });
-
-    return res.json({env: containerId})
+app.get('/env',(req, res)=>{
+    const ip = getExternalIPv4();
+    return res.json({env: JSON.stringify(ip, null, 2)})
 })
 
 app.listen(port,()=>{
